@@ -1,7 +1,9 @@
 import puppeteer from 'puppeteer';
 import * as cheerio from 'cheerio';
 import { Config } from './config/config';
+import { Offer } from './config/Offer';
 import { Object } from 'aws-sdk/clients/s3';
+
 
 /**
  * Uses puppeteer to scrape page return an object
@@ -10,7 +12,7 @@ import { Object } from 'aws-sdk/clients/s3';
  * @param {Object} config - config file
  * @return {Object} Returns object based on config.
  */
-export async function scrapePrice(config: Config): Promise<Array<{[field: string]: string}>> {
+export async function scrapePrice(config: Config): Promise<Offer[]> {
     const options: {[option: string]: puppeteer.LaunchOptions} = {
         default: {},
         debug: {
