@@ -4,12 +4,14 @@
     "description": "webapp to compare granola prices across several supermarkets",
     "main": "index.js",
     "scripts": {
-        "start": "webpack-dev-server --config ./config/webpack.config.js",
-        "build": "webpack --config ./config/webpack.config.js"
+        "run": "webpack-dev-server --config ./config/webpack.config.js",
+        "webpack": "webpack --config ./config/webpack.config.js",
+        "build": "(tsc -p tsconfig.json && robocopy ./config/ ./build/ template.yaml >nul 2>&1)",
+        "test": "(cd build && sam local invoke GranolaScraperFunction --event ../data/schedule.json)"
     },
     "keywords": [
         "granola",
-        "react",
+        "react", 
         "puppeteer"
     ],
     "author": "Andrew Hang",
@@ -17,8 +19,8 @@
     "dependencies": {
         "aws-sdk": "^2.233.1",
         "cheerio": "^1.0.0-rc.2",
-        "puppeteer": "^1.3.0",
-        "webpack-cli": "^2.1.3"
+        "npm": "^6.1.0",
+        "puppeteer": "^1.3.0"
     },
     "devDependencies": {
         "@types/cheerio": "^0.22.7",
@@ -26,8 +28,10 @@
         "@types/puppeteer": "^1.3.2",
         "awesome-typescript-loader": "^5.0.0",
         "eslint-config-google": "^0.9.1",
+        "ts-loader": "^4.3.0",
         "typescript": "^2.8.3",
         "webpack": "^4.8.2",
+        "webpack-cli": "^2.1.4",
         "webpack-dev-server": "^3.1.4"
     }
 }
