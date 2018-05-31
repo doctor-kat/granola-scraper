@@ -1,6 +1,7 @@
 import * as puppeteer from 'puppeteer';
 
 export class Config {
+    browser?: puppeteer.Browser;
     url: string;
     onLoad: string;
     container: string;
@@ -13,7 +14,8 @@ export class Config {
         [field: string]: ((
             node: CheerioElement,
             $: CheerioStatic,
-            scraperFn: (config: Config) => any // tslint:disable-line
+            scraperFn: (config: Config) => any, // tslint:disable-line
+            browser?: puppeteer.Browser,
         ) => any) | string // tslint:disable-line
     };
 }
