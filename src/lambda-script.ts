@@ -8,32 +8,60 @@ import { GetItemInput } from 'aws-sdk/clients/dynamodb';
 // @ts-ignore: allow json import
 // import * as offers from './offers.json';
 
-AWS.config.update({region: 'us-east-1'});
-const ddb = new AWS.DynamoDB({endpoint: 'http://localhost:8000'});
-const docClient = new AWS.DynamoDB.DocumentClient({endpoint: 'http://localhost:8000'});
+exports.handler = async () => {
+    AWS.config.update({region: 'us-east-1'});
+    const ddb = new AWS.DynamoDB({endpoint: 'http://localhost:8000'});
+    const docClient = new AWS.DynamoDB.DocumentClient({endpoint: 'http://localhost:8000'});
 
-const year = new Date().getFullYear();
-const table = year + '-W1_' + year + '-W52';
-console.debug(`TableName: ${table}`);
+    const year = new Date().getFullYear();
+    const table = year + '-W1_' + year + '-W52';
+    console.log(`TableName: ${table}`);
 
-(async() => {
     await ddb
         .describeTable({TableName: table})
         .promise()
-        .then((data) => console.debug(`Table already exists.`))
+        .then((data) => console.log(`Table ${table} already exists.`))
         .catch((err) => {
             if (err && err.code === 'ResourceNotFoundException') {
-                const params = require('./aws/create-table.js')(table);
+                const params = {
+                    TableName: table,
+                    KeySchema: [
+                        {
+                            AttributeName: 'date',
+                            KeyType: 'HASH',
+                        },
+                        {
+                            AttributeName: 'url',
+                            KeyType: 'RANGE',
+                        },
+                    ],
+                    AttributeDefinitions: [
+                        {
+                            AttributeName: 'date',
+                            AttributeType: 'S',
+                        },
+                        {
+                            AttributeName: 'url',
+                            AttributeType: 'S',
+                        },
+                    ],
+                    ProvisionedThroughput: {
+                        ReadCapacityUnits: 4,
+                        WriteCapacityUnits: 4,
+                    }
+                };
                 ddb.createTable(params, (err, data) => {
                     if (err) {
                         console.error('Error:', err);
                     } else {
-                        console.debug(`Created Table: ${params.TableName}.`);
+                        console.log(`Created Table: ${params.TableName}.`);
                     }
                 });
+            } else {
+                console.warn(`dynamoDB not found?`);
             }
         });
-    console.debug(`Finished checking if table exists.`);
+    console.log(`Finished checking if table exists.`);
 
     let offers: Offer[];
     offers = await scrapePrice(config);
@@ -47,7 +75,7 @@ console.debug(`TableName: ${table}`);
                 Key: { url: info[0].url }
             }, async (err, data) => {
                 if (err) {
-                    console.debug('Error:', err);
+                    console.log('Error:', err);
                 } else if (!data.Item) {
                     const item = info[0];
                     if (typeof item.description === 'string') {
@@ -76,20 +104,20 @@ console.debug(`TableName: ${table}`);
                             if (err) {
                                 console.error('Error:', err);
                             } else {
-                                console.debug(`${item.description} created.`);
+                                console.log(`${item.description} created.`);
                             }
                         });
                     } else {
                         console.warn(`item.description failed typeguard.`);
-                        console.debug('item:', item);
+                        console.log('item:', item);
                     }
                 } else {
-                    console.debug(`Item already exist.`);
+                    console.log(`Item already exist.`);
                 }
             });
         } else {
             console.warn(`offers failed typeguard.`);
-            console.debug('info:', info);
+            console.log('info:', info);
         }
     });
-})();
+};
