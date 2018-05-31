@@ -11,7 +11,7 @@ export const config:Config = {
         action: (page: puppeteer.Page) => page.keyboard.press("End"),
     },
     fields: {
-        data: async (node, $, scrapePrice) => {
+        data: async (node, $, scrapePrice, browser) => {
             const url =
                 "https://express.google.com" +
                 $('[gxvelog="ProductCard"]', node).attr("href");
@@ -24,6 +24,7 @@ export const config:Config = {
             }>;
 
             const mainData = await scrapePrice({
+                browser,
                 url,
                 onLoad: "gx-product-page",
                 container: "gx-product-overview",
@@ -32,11 +33,11 @@ export const config:Config = {
                         $(".title", node).text().trim(),
                     price: (node, $, scrapePrice) =>
                         $(".effectivePrice", node).text().trim(),
-                    regPrice: (node, $, scrapePrice) =>
-                        $(".originalPrice", node)
-                        .text()
-                        .substring(14)
-                        .trim(),
+                    // regPrice: (node, $, scrapePrice) =>
+                    //     $(".originalPrice", node)
+                    //     .text()
+                    //     .substring(14)
+                    //     .trim(),
                     merchant: (node, $, scrapePrice) =>
                         $(".soldBy", node)
                         .text()
@@ -46,6 +47,7 @@ export const config:Config = {
             });
 
             const additionalMerchants = await scrapePrice({
+                browser,
                 url,
                 onLoad: "gx-product-page",
                 container: ".competitiveOfferListItem",
@@ -89,7 +91,7 @@ export const config:Config = {
                 offers.push(offer);
             });
 
-            console.debug("Returning product...", offers);
+            console.log("Returning product...", offers);
             return offers;
         },
     },
