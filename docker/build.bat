@@ -1,0 +1,1 @@
+docker build -t lambci/lambda:nodejs8.10 .

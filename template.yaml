@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    granola-scraper
+
+    SAM Template for granola-app
+    
+Resources:
+    GranolaScraperFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            Handler: lambda-script.handler
+            Runtime: nodejs8.10
+            Timeout: 300
+            
+            Events:
+                GranolaScraper:
+                    Type: Schedule
+                    Properties:
+                        Schedule: rate(1 day)

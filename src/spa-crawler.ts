@@ -14,7 +14,9 @@ import { Object } from 'aws-sdk/clients/s3';
 export async function scrapePrice(config: Config): Promise<Offer[]> {
     const options: {[option: string]: puppeteer.LaunchOptions} = {
         default: {
-            executablePath: `./node_modules/puppeteer/.local-chromium/linux-549031/chrome-linux/chrome`,
+            executablePath: `./nod
+            e_modules/puppeteer/.local-chromium/linux-549031/chrome-linux/chrome`,
+            args: ['--no-sandbox']
         },
         debug: {
             headless: false,
