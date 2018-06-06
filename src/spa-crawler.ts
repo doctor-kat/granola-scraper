@@ -14,7 +14,7 @@ import { Object } from 'aws-sdk/clients/s3';
 export async function scrapePrice(config: Config): Promise<Offer[]> {
     const options: {[option: string]: puppeteer.LaunchOptions} = {
         default: {
-            executablePath: `./node_modules/puppeteer/.local-chromium/linux-549031/chrome-linux/chrome`,
+            // executablePath: `https://s3.amazonaws.com/granola-scraper/headless-chromium`,
         },
         debug: {
             headless: false,
@@ -82,7 +82,7 @@ export async function scrapePrice(config: Config): Promise<Offer[]> {
     }
 
     if (nodes.length > 0) {
-        const batchSize = 10;
+        const batchSize = 2;
         for (let i = 0; i < nodes.length; i++) {
             console.log(`Parsing node ${i+1} of ${nodes.length}`);
             const node = nodes[i];

@@ -3,14 +3,9 @@ node_modules
 jspm_packages
 
 # Serverless directories
-.serverless
 
-# AWS credentials
+# Local files
 .aws
-
-# VS Code Settings
+.build
+.serverless
 .vscode
-
-# Production files
-build
-data

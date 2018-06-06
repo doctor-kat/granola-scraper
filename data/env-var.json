@@ -1,0 +1,4 @@
+{
+    "PUPPETEER_EXECUTABLE_PATH": "./node_modules/puppeteer/.local-chromium/win64-549031/chrome-win32",
+    "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": true
+}

@@ -4,14 +4,12 @@
     "description": "webapp to compare granola prices across several supermarkets",
     "main": "index.js",
     "scripts": {
-        "run": "webpack-dev-server --config ./config/webpack.config.js",
-        "webpack": "webpack --config ./config/webpack.config.js",
         "build": "(tsc -p tsconfig.json && robocopy ./config/ ./build/ template.yaml >nul 2>&1)",
-        "test": "(cd build && sam local invoke GranolaScraperFunction --event ../data/schedule.json)"
+        "deploy": "serverless deploy -v"
     },
     "keywords": [
         "granola",
-        "react", 
+        "react",
         "puppeteer"
     ],
     "author": "Andrew Hang",
@@ -26,12 +24,13 @@
         "@types/cheerio": "^0.22.7",
         "@types/node": "^6.0.110",
         "@types/puppeteer": "^1.3.2",
-        "awesome-typescript-loader": "^5.0.0",
+        "chrome-launcher": "^0.10.2",
         "eslint-config-google": "^0.9.1",
+        "serverless-dynamodb-local": "^0.2.30",
+        "serverless-offline": "^3.25.2",
+        "serverless-plugin-chrome": "^1.0.0-47",
+        "serverless-plugin-typescript": "^1.1.5",
         "ts-loader": "^4.3.0",
-        "typescript": "^2.8.3",
-        "webpack": "^4.8.2",
-        "webpack-cli": "^2.1.4",
-        "webpack-dev-server": "^3.1.4"
+        "typescript": "^2.8.3"
     }
 }
