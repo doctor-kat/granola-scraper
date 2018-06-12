@@ -8,6 +8,10 @@
 - start local server in a separate command prompt `serverless dynamodb start --migrate` (pulls table settings from serverless.yaml).
 - run `serverless invoke local -f granolaScraper`.
 
+### Framework
+granola-scraper originally used aws-sam for local testing and deployment, but was ultimately abandoned due to the large number of incompatibilities.  Progress is saved for historical documentation in `aws_sam` branch [here](https://github.com/naisho/granola-scraper/blob/aws_sam/README.md).
+
+
 ## Use Cases
 ```
     What            When        Where                       View Type
