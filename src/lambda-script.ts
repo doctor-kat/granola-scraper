@@ -10,8 +10,9 @@ import { GetItemInput } from 'aws-sdk/clients/dynamodb';
 
 exports.handler = async () => {
     AWS.config.update({region: 'us-east-1'});
-    const ddb = new AWS.DynamoDB({endpoint: 'http://localhost:8000'});
-    const docClient = new AWS.DynamoDB.DocumentClient({endpoint: 'http://localhost:8000'});
+    const ddbConfig: AWS.DynamoDB.ClientConfiguration = {}; // {endpoint: 'http://localhost:8000'}
+    const ddb = new AWS.DynamoDB(ddbConfig);
+    const docClient = new AWS.DynamoDB.DocumentClient(ddbConfig);
 
     const year = new Date().getFullYear();
     const table = year + '-W1_' + year + '-W52';

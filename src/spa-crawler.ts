@@ -1,8 +1,12 @@
 import puppeteer from 'puppeteer';
 import * as cheerio from 'cheerio';
+import fs from 'fs';
 import { Config } from './config/config';
 import { Offer } from './config/Offer';
 import { Object } from 'aws-sdk/clients/s3';
+import path from 'path';
+import decompress from 'decompress';
+import child_process from 'child_process';
 
 /**
  * Uses puppeteer to scrape page return an object
@@ -12,9 +16,61 @@ import { Object } from 'aws-sdk/clients/s3';
  * @return {Object} Returns object based on config.
  */
 export async function scrapePrice(config: Config): Promise<Offer[]> {
+    process.env['PATH'] = process.env['PATH'] + ':' + process.env['LAMBDA_TASK_ROOT'];
+    const chromeZipPath = path.join(__dirname, '../chrome/stable-headless-chromium-amazonlinux-2017-03.zip');
+    const chromeDirPath = path.join(path.sep, 'tmp');
+    const chromePath = path.join(chromeDirPath, 'headless_shell');
+    
+    // // const launchPath = '/var/task/node_modules/puppeteer/lib/Launcher.js';
+
+    await decompress(chromeZipPath, chromePath);
+    
+    // // console.log(`\n${child_process.execSync(`chmod -x ${chromePath}`)}`);
+    // // fs.chmodSync(chromePath, 0o755);
+        
+    console.log(`Unzipped chrome to ${chromePath}`);
+
+    console.log(`chrome exists? ${fs.existsSync(chromePath)}`);
+
+    try {
+        fs.accessSync(chromePath, fs.constants.R_OK);
+        console.log(`read access to chrome OK`);
+    } catch (err) {
+        console.log(`no read access to chrome`);
+    }
+        
+    try {
+        fs.accessSync(chromePath, fs.constants.X_OK);
+        console.log(`execute access to chrome OK`);
+    } catch (err) {
+        console.log(`no execute access to chrome`);
+    }
+
+    // console.log(`\n${child_process.execSync(`chmod -x ${launchPath}`)}`);
+    
+    console.log(`node version: ${child_process.execSync('npm -v npm')}`);
+    
+    console.log(`/ folder contents: ${fs.readdirSync(path.resolve('/'))}`);
+    console.log(`\n${child_process.execSync('ls -l /')}`);
+    console.log(`/tmp folder contents: ${fs.readdirSync(path.resolve('/tmp'))}`);
+    console.log(`\n${child_process.execSync('ls -l /tmp')}`);
+    console.log(`/var/task folder contents: ${fs.readdirSync(path.resolve('/var/task'))}`);
+    console.log(`\n${child_process.execSync('ls -l /var/task')}`);
+
+    // child_process.execFile(chromePath);
+
     const options: {[option: string]: puppeteer.LaunchOptions} = {
         default: {
-            // executablePath: `https://s3.amazonaws.com/granola-scraper/headless-chromium`,
+            executablePath: chromePath,
+            args: [
+                '--disable-gpu',
+                '--no-sandbox',
+                '--homedir=/tmp',
+                '--single-process',
+                '--data-path=/tmp/data-path',
+                '--disk-cache-dir=/tmp/cache-dir',
+                '--disable-setuid-sandbox'
+            ]
         },
         debug: {
             headless: false,
@@ -30,6 +86,7 @@ export async function scrapePrice(config: Config): Promise<Offer[]> {
         browser = config.browser;
     } else {
         console.log(`Starting browser...`);
+        console.log(`Launching from ${options.default.executablePath}`);
         browser = await puppeteer.launch(options.default);
     }
     const page = await browser.newPage();

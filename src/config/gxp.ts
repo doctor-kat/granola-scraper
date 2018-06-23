@@ -1,5 +1,5 @@
 import * as puppeteer from 'puppeteer';
-import {Config} from './Config';
+import {Config} from './config';
 
 export const config:Config = {
     url: 'https://express.google.com/u/0/search?cat=B.528895',

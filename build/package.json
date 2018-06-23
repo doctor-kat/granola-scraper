@@ -1,0 +1,41 @@
+{
+    "name": "granola",
+    "version": "1.0.0",
+    "description": "webapp to compare granola prices across several supermarkets",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/naisho/granola-scraper.git"
+    },
+    "main": "lambda-script.ts",
+    "scripts": {
+        "init": "(npm install serverless -g && serverless dynamodb install)",
+        "test": "(serverless dynamodb start --migrate && serverless invoke local -f granolaScraper)",
+        "deploy": "serverless deploy -v"
+    },
+    "keywords": [
+        "granola",
+        "react",
+        "puppeteer"
+    ],
+    "author": "Andrew Hang",
+    "license": "ISC",
+    "dependencies": {
+        "aws-sdk": "^2.233.1",
+        "cheerio": "^1.0.0-rc.2",
+        "npm": "^6.1.0",
+        "puppeteer": "^1.3.0"
+    },
+    "devDependencies": {
+        "@types/cheerio": "^0.22.7",
+        "@types/node": "^6.0.110",
+        "@types/puppeteer": "^1.3.2",
+        "chrome-launcher": "^0.10.2",
+        "eslint-config-google": "^0.9.1",
+        "serverless-dynamodb-local": "^0.2.30",
+        "serverless-offline": "^3.25.2",
+        "serverless-plugin-chrome": "^1.0.0-47",
+        "serverless-plugin-typescript": "^1.1.5",
+        "ts-loader": "^4.3.0",
+        "typescript": "^2.8.3"
+    }
+}

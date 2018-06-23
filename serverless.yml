@@ -48,9 +48,15 @@ resources:
 
 plugins:
   - serverless-plugin-typescript
-  - serverless-plugin-chrome
   - serverless-dynamodb-local
   - serverless-offline
+
+package:
+  exclude:
+    - node_modules/@serverless-chrome/**
+    - node_modules/puppeteer/.local-chromium/**
+  include:
+    - chrome/**
 
 custom:
   chrome:
