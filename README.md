@@ -35,3 +35,15 @@
 - flavor
 - size
 - isNew?
+
+## TODO
+### Optimization
+- reduce timeout (most wasted time)
+- move binary to s3 bucket
+
+### Readability
+- refactor into lifecycle phases (setup, scrape, cleanup)
+- use winston/loggly
+
+### Documentation
+- find out why tar/headless_shell works
