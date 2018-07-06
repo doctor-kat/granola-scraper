@@ -1,67 +1,107 @@
 service: granola-scraper
 
 provider:
-  name: aws
-  runtime: nodejs8.10
-  memorySize: 1536
-  # iamRoleStatements:
-
-functions:
-  granolaScraper:
-    handler: src/lambda-script.handler
-    description: single page application scraper
-    timeout: 300
-
-# for test only...productData table name can change
-resources:
-  Resources:
-    productInfoTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: productInfo
-        AttributeDefinitions:
-          - AttributeName: url
-            AttributeType: S
-        KeySchema:
-          - AttributeName: url
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-    productDataTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: 2018-W1_2018-W52
-        AttributeDefinitions:
-          - AttributeName: date
-            AttributeType: S
-          - AttributeName: url
-            AttributeType: S
-        KeySchema:
-          - AttributeName: date
-            KeyType: HASH
-          - AttributeName: url
-            KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 4
-          WriteCapacityUnits: 4
-
-plugins:
-  - serverless-plugin-typescript
-  - serverless-dynamodb-local
-  - serverless-offline
+    name: aws
+    runtime: nodejs8.10
+    stage: dev
+    stackName: granola-stack
+    # profile: production
+    memorySize: 3008
+    versionFunctions: true
+    environment:
+        queueTableName: granola-queue
+        dataTableName: granola-data
+        productsTableName: granola-products
 
 package:
-  exclude:
-    - node_modules/@serverless-chrome/**
-    - node_modules/puppeteer/.local-chromium/**
-  include:
-    - chrome/**
+    exclude:
+        - node_modules/@serverless-chrome
+        - node_modules/puppeteer/.local-chromium/**
+    include:
+        - chrome/**
+
+functions:
+    granolaScraper-main:
+        handler: src/main-lambda.handler
+        description: scheduled event handler
+        timeout: 90
+        events:
+            - schedule:
+                name: daily
+                rate: rate(24 hours)
+                enabled: false #true
+    granolaScraper-product:
+        handler: src/product-lambda.handler
+        description: ddb event stream handler
+        timeout: 300
+        events:
+            - stream:
+                type: dynamodb
+                arn: arn:aws:dynamodb:us-east-1:809220820577:table/granola-queue/stream/2018-07-06T04:12:05.714
+                batchSize: 1
+                startingPosition: LATEST
+                enabled: true
+
+resources:
+    Resources:
+        granolaQueue:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                TableName: granola-queue
+                AttributeDefinitions:
+                    - AttributeName: date
+                      AttributeType: S
+                    - AttributeName: url
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: date
+                      KeyType: HASH
+                    - AttributeName: url
+                      KeyType: RANGE
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 1
+                    WriteCapacityUnits: 1
+            # event stream
+        granolaData:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                TableName: granola-data
+                AttributeDefinitions:
+                    - AttributeName: key
+                      AttributeType: S
+                    - AttributeName: price
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: key
+                      KeyType: HASH
+                    - AttributeName: price
+                      KeyType: RANGE
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 1
+                    WriteCapacityUnits: 1
+        granolaProducts:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                TableName: granola-products
+                AttributeDefinitions:
+                    - AttributeName: url
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: url
+                      KeyType: HASH
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 1
+                    WriteCapacityUnits: 1
+
+plugins:
+    - serverless-plugin-typescript
+    - serverless-dynamodb-local
+    - serverless-offline
 
 custom:
-  chrome:
-    flags:
-      - --window-size=400,400
-      - --hide-scrollbars
-    functions:
-      - granolaScraper
+    chrome:
+        flags:
+            - --window-size=400,400
+            - --hide-scrollbars
+        functions:
+            - granolaScraper
