@@ -1,0 +1,94 @@
+{
+    "Records": [
+        {
+            "eventID": "496fe8eb39e8b9c69e697c9fe611de6f",
+            "eventName": "INSERT",
+            "eventVersion": "1.1",
+            "eventSource": "aws:dynamodb",
+            "awsRegion": "us-east-1",
+            "dynamodb": {
+                "ApproximateCreationDateTime": 1530672840,
+                "Keys": {
+                    "date": {
+                        "S": "2018-7-4 "
+                    },
+                    "url": {
+                        "S": "https://express.google.com/product/3969992966101892885_13372561507751533399_8175035"
+                    }
+                },
+                "NewImage": {
+                    "date": {
+                        "S": "2018-7-4 "
+                    },
+                    "url": {
+                        "S": "https://express.google.com/product/3969992966101892885_13372561507751533399_8175035"
+                    }
+                },
+                "SequenceNumber": "13533200000000056013555797",
+                "SizeBytes": 198,
+                "StreamViewType": "NEW_IMAGE"
+            },
+            "eventSourceARN": "arn:aws:dynamodb:us-east-1:809220820577:table/granola-queue/stream/2018-07-01T04:42:33.360"
+        },
+        {
+            "eventID": "397f16163bb18aa3ab2652bcd38f273e",
+            "eventName": "INSERT",
+            "eventVersion": "1.1",
+            "eventSource": "aws:dynamodb",
+            "awsRegion": "us-east-1",
+            "dynamodb": {
+                "ApproximateCreationDateTime": 1530672840,
+                "Keys": {
+                    "date": {
+                        "S": "2018-7-4 "
+                    },
+                    "url": {
+                        "S": "https://express.google.com/product/12516502675708711050_8163264984201225461_8175035"
+                    }
+                },
+                "NewImage": {
+                    "date": {
+                        "S": "2018-7-4 "
+                    },
+                    "url": {
+                        "S": "https://express.google.com/product/12516502675708711050_8163264984201225461_8175035"
+                    }
+                },
+                "SequenceNumber": "13533300000000056013555798",
+                "SizeBytes": 198,
+                "StreamViewType": "NEW_IMAGE"
+            },
+            "eventSourceARN": "arn:aws:dynamodb:us-east-1:809220820577:table/granola-queue/stream/2018-07-01T04:42:33.360"
+        },
+        {
+            "eventID": "da6c43c25923b600ad0d97e481606c5f",
+            "eventName": "INSERT",
+            "eventVersion": "1.1",
+            "eventSource": "aws:dynamodb",
+            "awsRegion": "us-east-1",
+            "dynamodb": {
+                "ApproximateCreationDateTime": 1530672840,
+                "Keys": {
+                    "date": {
+                        "S": "2018-7-4 "
+                    },
+                    "url": {
+                        "S": "https://express.google.com/product/5621642970023676598_18377947824383620101_10046"
+                    }
+                },
+                "NewImage": {
+                    "date": {
+                        "S": "2018-7-4 "
+                    },
+                    "url": {
+                        "S": "https://express.google.com/product/5621642970023676598_18377947824383620101_10046"
+                    }
+                },
+                "SequenceNumber": "13533400000000056013555799",
+                "SizeBytes": 194,
+                "StreamViewType": "NEW_IMAGE"
+            },
+            "eventSourceARN": "arn:aws:dynamodb:us-east-1:809220820577:table/granola-queue/stream/2018-07-01T04:42:33.360"
+        }
+    ]
+}
