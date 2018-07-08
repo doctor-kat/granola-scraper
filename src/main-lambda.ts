@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as SPAScraper from './spa-scraper';
 import { overviewConfig } from './config/gxp-overview';
 // import { productConfig } from './config/gxp-product';
-import { Offer } from './config/Offer';
+import { Offer } from './config/offer';
 import * as AWSLambda from 'aws-lambda';
 import { Config } from './config/config';
 

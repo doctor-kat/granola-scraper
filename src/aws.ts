@@ -1,5 +1,5 @@
 import * as AWS from 'aws-sdk';
-import { Offer } from './config/Offer';
+import { Offer } from './config/offer';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
 AWS.config.update({ region: 'us-east-1' });
@@ -118,4 +118,14 @@ export async function batchPutOffers(tableName: string, offers: Offer[]) {
             params.RequestItems[tableName] = [];
         }
     } // for
+} // function
+
+export function createS3Request(bucketName: string, fileName: string) {
+    const s3 = new AWS.S3();
+    const params = {
+        Bucket: bucketName,
+        Key: fileName
+    }
+    const object = s3.getObject(params);
+    return object
 } // function

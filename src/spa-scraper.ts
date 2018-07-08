@@ -1,13 +1,15 @@
 import puppeteer from 'puppeteer';
 import * as cheerio from 'cheerio';
 
+import { createS3Request } from './aws';
 import fs from 'fs';
 import tar from 'tar';
 import path from 'path';
 import child_process from 'child_process';
 
 import { Config } from './config/config';
-import { Offer } from './config/Offer';
+import { Offer } from './config/offer';
+import { AnalysisOptions } from 'aws-sdk/clients/cloudsearch';
 
 /**
  * uses puppeteer to scrape page return an array of maps.
@@ -129,7 +131,6 @@ export async function launchBrowser(browser?: puppeteer.Browser): Promise<puppet
         return puppeteer.launch({headless: false, slowMo: 100});
     } else {
         // const chromeZipPath = path.join(__dirname, '../chrome/headless_shell.tar.gz');
-        const chromeZipPath = process.env.chromeZipPath;
         const chromeDirPath = path.join(path.sep, 'tmp');
         const chromePath = path.join(chromeDirPath, 'headless_shell');
         const options: {[option: string]: puppeteer.LaunchOptions} = {
@@ -150,12 +151,7 @@ export async function launchBrowser(browser?: puppeteer.Browser): Promise<puppet
         };
 
         if (!fs.existsSync(chromePath)) {
-            await tar.extract({
-                file: chromeZipPath,
-                cwd: chromeDirPath,
-                sync: true
-            });
-            console.log(`extracted chrome to ${chromePath}`);            
+            await setupS3Chrome(chromeDirPath);
             console.log(`/tmp folder contents:\n${child_process.execSync('ls -l /tmp')}`);
         } else {
             console.log(`browser already unzipped`);
@@ -176,6 +172,26 @@ async function blockImageLoading(page: puppeteer.Page) {
         }
     });
 }
+
+// https://github.com/sambaiz/puppeteer-lambda-starter-kit/blob/master/src/starter-kit/setup.js
+function setupS3Chrome(destination: string) {
+    const chromeBucketName: string = process.env.chromeBucketName;
+    const chromeFileName: string = process.env.chromeFileName;
+
+    return new Promise((resolve, reject) => {
+        createS3Request(chromeBucketName, chromeFileName)
+            .createReadStream()
+            .on('error', (err) => reject(err))
+            .pipe(tar.x({
+                C: destination,
+            }))
+            .on('error', (err) => reject(err))
+            .on('end', () => {
+                console.log(`extracted chrome to ${destination}`);
+                resolve();
+            });
+    });
+} // function
 
 // import { overviewConfig } from './config/gxp-main';
 // spaScraper(overviewConfig);
