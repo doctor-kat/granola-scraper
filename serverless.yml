@@ -12,12 +12,12 @@ provider:
         queueTableName: granola-queue
         dataTableName: granola-data
         productsTableName: granola-products
+        chromeZipPath: https://s3.amazonaws.com/granola-chromium/headless_shell.tar.gz
 
 package:
     exclude:
         - node_modules/@serverless-chrome
         - node_modules/puppeteer/.local-chromium/**
-    include:
         - chrome/**
 
 functions:
@@ -44,6 +44,11 @@ functions:
 
 resources:
     Resources:
+        chromium:
+            Type: AWS::S3::Bucket
+            BucketName: granola-chromium
+            AccessControl: AwsExecRead
+            AccelerateConfiguration: suspended
         granolaQueue:
             Type: AWS::DynamoDB::Table
             Properties:

@@ -93,7 +93,7 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
                         product[field] = value.text().trim();
                     }
                 }
-                // console.log('product:', product);
+                console.log(product);
                 products.push(product);
             }
         } catch (err) {
@@ -128,7 +128,8 @@ export async function launchBrowser(browser?: puppeteer.Browser): Promise<puppet
         console.log(`windows environment detected...`);
         return puppeteer.launch({headless: false, slowMo: 100});
     } else {
-        const chromeZipPath = path.join(__dirname, '../chrome/headless_shell.tar.gz');
+        // const chromeZipPath = path.join(__dirname, '../chrome/headless_shell.tar.gz');
+        const chromeZipPath = process.env.chromeZipPath;
         const chromeDirPath = path.join(path.sep, 'tmp');
         const chromePath = path.join(chromeDirPath, 'headless_shell');
         const options: {[option: string]: puppeteer.LaunchOptions} = {
