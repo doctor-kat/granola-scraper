@@ -34,7 +34,7 @@ functions:
     granolaScraper-product:
         handler: src/product-lambda.handler
         description: ddb event stream handler
-        timeout: 300
+        timeout: 90
         events:
             - stream:
                 type: dynamodb

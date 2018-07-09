@@ -22,6 +22,7 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
     let existingBrowser = browser ? true : false;
 
     const page = await browser.newPage();
+    // page.setDefaultNavigationTimeout(5000);
     await blockImageLoading(page);
     await page.goto(configs[0].url, {
         waitUntil: 'networkidle2',
@@ -34,7 +35,7 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
     for (let config of configs) {
         try {
             console.log(`scraping ${config.name}...`);
-            await page.waitForSelector(config.selector);
+            await page.waitForSelector(config.selector, {timeout: 5000});
             let html = await page.content();
 
             let $: CheerioStatic, nodes: Cheerio;
@@ -53,7 +54,8 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
                     await config.pagination.action(page);
                     try {
                         await page.waitForSelector(
-                            config.pagination.loader, {
+                            config.pagination.loader,
+                            {
                                 timeout: 5000,
                             }
                         );
@@ -62,7 +64,10 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
                     }
                     await page.waitForSelector(
                         config.pagination.loader,
-                        {hidden: true}
+                        {
+                            timeout: 5000,
+                            hidden: true
+                        }
                     );
                 } while (nodes.length > prevNodes.length);
                 // } while (false);

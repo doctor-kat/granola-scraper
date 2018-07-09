@@ -100,7 +100,7 @@ exports.handler = async (events: AWSLambda.DynamoDBStreamEvent, context: AWSLamb
     } // for
     console.log(`closing browser...`);
     await cleanup(browser);
-    context.succeed(`== Completed request with ${context.getRemainingTimeInMillis()}ms remaining ==`);
+    context.succeed(`Completed request in ${90*1000 - context.getRemainingTimeInMillis()}ms`);
 }
 
 async function cleanup(browser?: import('puppeteer').Browser) {

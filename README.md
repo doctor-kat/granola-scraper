@@ -44,8 +44,8 @@ granola-scraper originally used aws-sam for local testing and deployment, but wa
 
 ## TODO
 ### Optimization
-- reduce timeout (most wasted time)
-- move binary to s3 bucket
+- ~~reduce timeout (most wasted time)~~
+- ~~move binary to s3 bucket~~
 
 ### Readability
 - refactor into lifecycle phases (setup, scrape, cleanup)
