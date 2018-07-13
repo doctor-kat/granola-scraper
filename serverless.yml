@@ -14,6 +14,9 @@ provider:
         productsTableName: granola-products
         chromeBucketName: granola-chromium
         chromeFileName: headless_shell.tar.gz
+        infiniteScrollTimeout: 5000
+        initialLoadTimeout: 5000
+        selectorTimeout: 2000
 
 package:
     exclude:

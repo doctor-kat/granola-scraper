@@ -21,21 +21,25 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
     let existingBrowser = browser ? true : false;
 
     const page = await browser.newPage();
-    // page.setDefaultNavigationTimeout(5000);
+    // page.setDefaultNavigationTimeout(process.env.defaultLoadTimeout);
     await blockImageLoading(page);
-    console.log(configs[0].url);
     await page.goto(configs[0].url, {
         waitUntil: 'networkidle2',
     });
     let title = await page.title();
     console.log(`Page loaded: (${title})`);
+    if (title.indexOf('404') > 0) {
+        console.log(`404 error...skipping page`);
+        await cleanup(browser);
+        return [{description: '404 error'}];
+    }
     
     const products = [];
     
     for (let config of configs) {
         try {
             console.log(`scraping ${config.name} (${config.selector})...`);
-            await page.waitForSelector(config.selector, {timeout: 5000});
+            await page.waitForSelector(config.selector, {timeout: process.env.selectorTimeout});
             let html = await page.content();
 
             let $: CheerioStatic, nodes: Cheerio;
@@ -56,7 +60,7 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
                         await page.waitForSelector(
                             config.pagination.loader,
                             {
-                                timeout: 5000,
+                                timeout: process.env.infiniteScrollTimeout,
                             }
                         );
                     } catch (error) {
@@ -65,7 +69,7 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
                     await page.waitForSelector(
                         config.pagination.loader,
                         {
-                            timeout: 5000,
+                            timeout: process.env.infiniteScrollTimeout,
                             hidden: true
                         }
                     );
@@ -115,17 +119,21 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
         await page.close();
     } else {
         console.log(`closing browser...`)
-        await browser.close();
-        const files = fs.readdirSync('/tmp');
-        for (let file in files) {
-            if (file != 'headless_shell') {
-                console.log(`deleting ${file}`);
-                fs.unlinkSync(`/tmp/${file}`);
-            }
-        }
+        await cleanup(browser);
     }
     return products;
 } 
+
+async function cleanup(browser?: import('puppeteer').Browser) {
+    if (browser) { await browser.close(); }
+    const files = fs.readdirSync('/tmp');
+    for (let file of files) {
+        if (file.includes('core')) {
+            console.log(`deleting ${file}`);
+            fs.unlinkSync(`/tmp/${file}`);
+        }
+    }
+}
 
 export async function launchBrowser(browser?: puppeteer.Browser): Promise<puppeteer.Browser> {
     if (browser) {
