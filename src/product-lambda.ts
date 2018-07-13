@@ -1,9 +1,8 @@
 import * as SPAScraper from './spa-scraper';
-import { overviewConfig } from './config/gxp-overview';
+import { mainConfig, additionalConfig } from './config/gxp-product';
 import { Offer } from './config/offer';
 import * as AWSLambda from 'aws-lambda';
-import { Config } from './config/config';
-import { createTable, batchPutProducts, batchPutOffers } from './aws';
+import { batchPutProducts, batchPutOffers } from './aws';
 import * as fs from 'fs';
 
 /**
@@ -25,31 +24,10 @@ exports.handler = async (events: AWSLambda.DynamoDBStreamEvent, context: AWSLamb
             console.log(`processing ${record.dynamodb.NewImage.url.S}...`);
             if (!browser) { browser = await SPAScraper.launchBrowser(); }
             const url = record.dynamodb.NewImage.url.S;
+
             // console.log(`scraping product overview...`);
-            const mainConfig: Config = {
-                name: 'main offer',
-                browser,
-                url,
-                selector: 'gx-product-overview',
-                fields: {
-                    description: { selector: '.title' },
-                    price: { selector: '.effectivePrice' },
-                    merchant: {
-                        selector: '.soldBy',
-                        post: '.text().substring(9).trim()'
-                    },
-                }
-            }
-            const additionalConfig: Config = {
-                name: 'additional offers',
-                browser,
-                url,
-                selector: '.competitiveOfferListItem',
-                fields: {
-                    price: { selector: '.offerPrice' },
-                    merchant: { selector: '.offerMerchantName' }
-                }
-            }
+            Object.assign(mainConfig, {browser, url});
+            Object.assign(additionalConfig, {browser, url});
             const offers = await SPAScraper.scrape(browser, mainConfig, additionalConfig);
             
             if (offers[0] && offers[0].description) {
@@ -114,5 +92,5 @@ async function cleanup(browser?: import('puppeteer').Browser) {
     }
 }
 
-// const event = require('../data/ddb-update-event.json');
+// const event = require('../data/ddb-stream-event.json');
 // this.handler(event);

@@ -9,7 +9,6 @@ import child_process from 'child_process';
 
 import { Config } from './config/config';
 import { Offer } from './config/offer';
-import { AnalysisOptions } from 'aws-sdk/clients/cloudsearch';
 
 /**
  * uses puppeteer to scrape page return an array of maps.
@@ -24,6 +23,7 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
     const page = await browser.newPage();
     // page.setDefaultNavigationTimeout(5000);
     await blockImageLoading(page);
+    console.log(configs[0].url);
     await page.goto(configs[0].url, {
         waitUntil: 'networkidle2',
     });
@@ -34,7 +34,7 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
     
     for (let config of configs) {
         try {
-            console.log(`scraping ${config.name}...`);
+            console.log(`scraping ${config.name} (${config.selector})...`);
             await page.waitForSelector(config.selector, {timeout: 5000});
             let html = await page.content();
 
@@ -104,7 +104,9 @@ export async function scrape(b?: puppeteer.Browser, ...configs: Config[]): Promi
                 products.push(product);
             }
         } catch (err) {
-            console.log(`selector didn't return anything`);
+            console.error(err);
+            const html = await page.content();
+            // console.error(html);
         }        
     }
     

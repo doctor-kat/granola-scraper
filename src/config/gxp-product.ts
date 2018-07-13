@@ -3,14 +3,18 @@ import { Config } from "./config";
 export const mainConfig: Config = {
     name: 'main offer',
     url: null,
-    selector: 'gx-product-overview',
+    selector: '.productOverviewColumn',
     fields: {
-        // name: { selector: '.title' },
+        description: { selector: '.title' },
         price: { selector: '.effectivePrice' },
         merchant: {
             selector: '.soldBy',
             post: '.text().substring(9).trim()'
         },
+        zipCode: {
+            selector: '.shipTo',
+            post: '.text().substring(9).trim()'
+        }
     }
 }
 
