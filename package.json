@@ -10,7 +10,7 @@
     "scripts": {
         "init": "(npm install serverless -g && serverless dynamodb install)",
         "test": "(serverless dynamodb start --migrate && serverless invoke local -f granolaScraper)",
-        "deploy": "serverless deploy -v"
+        "deploy": "date && serverless deploy && printf '\\7'"
     },
     "keywords": [
         "granola",
